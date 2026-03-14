@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eduswap.biz.mapper.BizMessageMapper">
+    
+    <resultMap type="BizMessage" id="BizMessageResult">
+        <result property="msgId"    column="msg_id"    />
+        <result property="sendUserId"    column="send_user_id"    />
+        <result property="receiveUserId"    column="receive_user_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="msgContent"    column="msg_content"    />
+        <result property="isRead"    column="is_read"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectBizMessageVo">
+        select msg_id, send_user_id, receive_user_id, product_id, msg_content, is_read, create_time, del_flag from biz_message
+    </sql>
+
+    <select id="selectBizMessageList" parameterType="BizMessage" resultMap="BizMessageResult">
+        <include refid="selectBizMessageVo"/>
+        <where>  
+            <if test="sendUserId != null "> and send_user_id = #{sendUserId}</if>
+            <if test="receiveUserId != null "> and receive_user_id = #{receiveUserId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="msgContent != null  and msgContent != ''"> and msg_content = #{msgContent}</if>
+            <if test="isRead != null  and isRead != ''"> and is_read = #{isRead}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizMessageByMsgId" parameterType="Long" resultMap="BizMessageResult">
+        <include refid="selectBizMessageVo"/>
+        where msg_id = #{msgId}
+    </select>
+
+    <insert id="insertBizMessage" parameterType="BizMessage" useGeneratedKeys="true" keyProperty="msgId">
+        insert into biz_message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sendUserId != null">send_user_id,</if>
+            <if test="receiveUserId != null">receive_user_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="msgContent != null and msgContent != ''">msg_content,</if>
+            <if test="isRead != null and isRead != ''">is_read,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sendUserId != null">#{sendUserId},</if>
+            <if test="receiveUserId != null">#{receiveUserId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="msgContent != null and msgContent != ''">#{msgContent},</if>
+            <if test="isRead != null and isRead != ''">#{isRead},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizMessage" parameterType="BizMessage">
+        update biz_message
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sendUserId != null">send_user_id = #{sendUserId},</if>
+            <if test="receiveUserId != null">receive_user_id = #{receiveUserId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="msgContent != null and msgContent != ''">msg_content = #{msgContent},</if>
+            <if test="isRead != null and isRead != ''">is_read = #{isRead},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where msg_id = #{msgId}
+    </update>
+
+    <delete id="deleteBizMessageByMsgId" parameterType="Long">
+        delete from biz_message where msg_id = #{msgId}
+    </delete>
+
+    <delete id="deleteBizMessageByMsgIds" parameterType="String">
+        delete from biz_message where msg_id in 
+        <foreach item="msgId" collection="array" open="(" separator="," close=")">
+            #{msgId}
+        </foreach>
+    </delete>
+</mapper>

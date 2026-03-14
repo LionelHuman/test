@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eduswap.biz.mapper.BizAddressMapper">
+    
+    <resultMap type="BizAddress" id="BizAddressResult">
+        <result property="addressId"    column="address_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="receiverName"    column="receiver_name"    />
+        <result property="receiverPhone"    column="receiver_phone"    />
+        <result property="schoolId"    column="school_id"    />
+        <result property="addressDetail"    column="address_detail"    />
+        <result property="isDefault"    column="is_default"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectBizAddressVo">
+        select address_id, user_id, receiver_name, receiver_phone, school_id, address_detail, is_default, create_time, update_time, del_flag from biz_address
+    </sql>
+
+    <select id="selectBizAddressList" parameterType="BizAddress" resultMap="BizAddressResult">
+        <include refid="selectBizAddressVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="receiverName != null  and receiverName != ''"> and receiver_name like concat('%', #{receiverName}, '%')</if>
+            <if test="receiverPhone != null  and receiverPhone != ''"> and receiver_phone = #{receiverPhone}</if>
+            <if test="schoolId != null "> and school_id = #{schoolId}</if>
+            <if test="addressDetail != null  and addressDetail != ''"> and address_detail = #{addressDetail}</if>
+            <if test="isDefault != null  and isDefault != ''"> and is_default = #{isDefault}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizAddressByAddressId" parameterType="Long" resultMap="BizAddressResult">
+        <include refid="selectBizAddressVo"/>
+        where address_id = #{addressId}
+    </select>
+
+    <insert id="insertBizAddress" parameterType="BizAddress" useGeneratedKeys="true" keyProperty="addressId">
+        insert into biz_address
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="receiverName != null and receiverName != ''">receiver_name,</if>
+            <if test="receiverPhone != null and receiverPhone != ''">receiver_phone,</if>
+            <if test="schoolId != null">school_id,</if>
+            <if test="addressDetail != null and addressDetail != ''">address_detail,</if>
+            <if test="isDefault != null and isDefault != ''">is_default,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="receiverName != null and receiverName != ''">#{receiverName},</if>
+            <if test="receiverPhone != null and receiverPhone != ''">#{receiverPhone},</if>
+            <if test="schoolId != null">#{schoolId},</if>
+            <if test="addressDetail != null and addressDetail != ''">#{addressDetail},</if>
+            <if test="isDefault != null and isDefault != ''">#{isDefault},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizAddress" parameterType="BizAddress">
+        update biz_address
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="receiverName != null and receiverName != ''">receiver_name = #{receiverName},</if>
+            <if test="receiverPhone != null and receiverPhone != ''">receiver_phone = #{receiverPhone},</if>
+            <if test="schoolId != null">school_id = #{schoolId},</if>
+            <if test="addressDetail != null and addressDetail != ''">address_detail = #{addressDetail},</if>
+            <if test="isDefault != null and isDefault != ''">is_default = #{isDefault},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where address_id = #{addressId}
+    </update>
+
+    <delete id="deleteBizAddressByAddressId" parameterType="Long">
+        delete from biz_address where address_id = #{addressId}
+    </delete>
+
+    <delete id="deleteBizAddressByAddressIds" parameterType="String">
+        delete from biz_address where address_id in 
+        <foreach item="addressId" collection="array" open="(" separator="," close=")">
+            #{addressId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eduswap.biz.mapper.BizProductImageMapper">
+    
+    <resultMap type="BizProductImage" id="BizProductImageResult">
+        <result property="imageId"    column="image_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="imageUrl"    column="image_url"    />
+        <result property="sort"    column="sort"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBizProductImageVo">
+        select image_id, product_id, image_url, sort, create_time from biz_product_image
+    </sql>
+
+    <select id="selectBizProductImageList" parameterType="BizProductImage" resultMap="BizProductImageResult">
+        <include refid="selectBizProductImageVo"/>
+        <where>  
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="imageUrl != null  and imageUrl != ''"> and image_url = #{imageUrl}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizProductImageByImageId" parameterType="Long" resultMap="BizProductImageResult">
+        <include refid="selectBizProductImageVo"/>
+        where image_id = #{imageId}
+    </select>
+
+    <insert id="insertBizProductImage" parameterType="BizProductImage" useGeneratedKeys="true" keyProperty="imageId">
+        insert into biz_product_image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productId != null">product_id,</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url,</if>
+            <if test="sort != null">sort,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productId != null">#{productId},</if>
+            <if test="imageUrl != null and imageUrl != ''">#{imageUrl},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizProductImage" parameterType="BizProductImage">
+        update biz_product_image
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where image_id = #{imageId}
+    </update>
+
+    <delete id="deleteBizProductImageByImageId" parameterType="Long">
+        delete from biz_product_image where image_id = #{imageId}
+    </delete>
+
+    <delete id="deleteBizProductImageByImageIds" parameterType="String">
+        delete from biz_product_image where image_id in 
+        <foreach item="imageId" collection="array" open="(" separator="," close=")">
+            #{imageId}
+        </foreach>
+    </delete>
+</mapper>

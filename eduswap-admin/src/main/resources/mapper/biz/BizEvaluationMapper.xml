@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eduswap.biz.mapper.BizEvaluationMapper">
+    
+    <resultMap type="BizEvaluation" id="BizEvaluationResult">
+        <result property="evalId"    column="eval_id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="productId"    column="product_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="evalScore"    column="eval_score"    />
+        <result property="evalContent"    column="eval_content"    />
+        <result property="evalPics"    column="eval_pics"    />
+        <result property="replyContent"    column="reply_content"    />
+        <result property="replyTime"    column="reply_time"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectBizEvaluationVo">
+        select eval_id, order_id, product_id, user_id, seller_id, eval_score, eval_content, eval_pics, reply_content, reply_time, create_time, del_flag from biz_evaluation
+    </sql>
+
+    <select id="selectBizEvaluationList" parameterType="BizEvaluation" resultMap="BizEvaluationResult">
+        <include refid="selectBizEvaluationVo"/>
+        <where>  
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="productId != null "> and product_id = #{productId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+            <if test="evalScore != null "> and eval_score = #{evalScore}</if>
+            <if test="evalContent != null  and evalContent != ''"> and eval_content = #{evalContent}</if>
+            <if test="evalPics != null  and evalPics != ''"> and eval_pics = #{evalPics}</if>
+            <if test="replyContent != null  and replyContent != ''"> and reply_content = #{replyContent}</if>
+            <if test="replyTime != null "> and reply_time = #{replyTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizEvaluationByEvalId" parameterType="Long" resultMap="BizEvaluationResult">
+        <include refid="selectBizEvaluationVo"/>
+        where eval_id = #{evalId}
+    </select>
+
+    <insert id="insertBizEvaluation" parameterType="BizEvaluation" useGeneratedKeys="true" keyProperty="evalId">
+        insert into biz_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">order_id,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="sellerId != null">seller_id,</if>
+            <if test="evalScore != null">eval_score,</if>
+            <if test="evalContent != null">eval_content,</if>
+            <if test="evalPics != null">eval_pics,</if>
+            <if test="replyContent != null">reply_content,</if>
+            <if test="replyTime != null">reply_time,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="delFlag != null and delFlag != ''">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">#{orderId},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="sellerId != null">#{sellerId},</if>
+            <if test="evalScore != null">#{evalScore},</if>
+            <if test="evalContent != null">#{evalContent},</if>
+            <if test="evalPics != null">#{evalPics},</if>
+            <if test="replyContent != null">#{replyContent},</if>
+            <if test="replyTime != null">#{replyTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="delFlag != null and delFlag != ''">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizEvaluation" parameterType="BizEvaluation">
+        update biz_evaluation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="sellerId != null">seller_id = #{sellerId},</if>
+            <if test="evalScore != null">eval_score = #{evalScore},</if>
+            <if test="evalContent != null">eval_content = #{evalContent},</if>
+            <if test="evalPics != null">eval_pics = #{evalPics},</if>
+            <if test="replyContent != null">reply_content = #{replyContent},</if>
+            <if test="replyTime != null">reply_time = #{replyTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="delFlag != null and delFlag != ''">del_flag = #{delFlag},</if>
+        </trim>
+        where eval_id = #{evalId}
+    </update>
+
+    <delete id="deleteBizEvaluationByEvalId" parameterType="Long">
+        delete from biz_evaluation where eval_id = #{evalId}
+    </delete>
+
+    <delete id="deleteBizEvaluationByEvalIds" parameterType="String">
+        delete from biz_evaluation where eval_id in 
+        <foreach item="evalId" collection="array" open="(" separator="," close=")">
+            #{evalId}
+        </foreach>
+    </delete>
+</mapper>
